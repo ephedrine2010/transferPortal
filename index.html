@@ -11,98 +11,179 @@
 </head>
 
 <body>
-    <div class="container">
 
-        <!-- Header -->
-        <header class="app-header">
-            <h1>Transfers Register</h1>
-        </header>
-
-        <!-- Status message area -->
-        <div id="status-message" class="status-msg hidden"></div>
-
-        <!-- Scanner Section -->
-        <section class="scanner-section">
-            <!-- Camera view (hidden by default) -->
-            <div id="scanner-container" class="scanner-hidden">
-                <div id="scanner-reader"></div>
+    <!-- ============ Login Screen ============ -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-card">
+            <h1 class="login-title">Transfers Register</h1>
+            <div class="auth-form">
+                <input type="text" id="store-id" placeholder="Store ID" autocomplete="off" />
+                <input type="text" id="emp-id" placeholder="Emp ID" autocomplete="off" />
+                <button id="login-btn" class="login-btn-primary">Login</button>
+                <button id="signup-btn" class="login-btn-outline">Sign Up</button>
             </div>
-
-            <!-- Controls -->
-            <div class="scanner-controls">
-                <button id="btn-scan" class="btn btn-primary">Scan</button>
-            </div>
-
-            <!-- Barcode input + Search -->
-            <div class="input-row">
-                <input
-                    type="text"
-                    id="barcode-input"
-                    class="barcode-input"
-                    placeholder="Barcode / SKU"
-                    inputmode="numeric"
-                    autocomplete="off"
-                />
-                <button id="btn-search" class="btn btn-secondary">Search</button>
-            </div>
-        </section>
-
-        <!-- Scanned Item Result -->
-        <section id="item-result" class="item-result hidden">
-            <h3>Item Found</h3>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>SKU</th>
-                        <th>Item Name (EN)</th>
-                        <th>Price</th>
-                        <th>Qty</th>
-                    </tr>
-                </thead>
-                <tbody id="item-result-body"></tbody>
-            </table>
-            <button id="btn-add-transfer" class="btn btn-success">Add Transfer</button>
-        </section>
-
-        <!-- Transfers List -->
-        <section id="transfers-section" class="transfers-section hidden">
-            <div class="transfers-header">
-                <h2>Transfers</h2>
-                <span id="transfers-count" class="transfers-count">0</span>
-            </div>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>SKU</th>
-                        <th>Item Name</th>
-                        <th>Price</th>
-                        <th>Qty</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="transfers-body"></tbody>
-            </table>
-        </section>
+        </div>
+        <div class="login-footer">
+            <p>By <a href="https://www.linkedin.com/in/mohamed-shanab-154370132/" target="_blank"
+                    rel="noopener noreferrer">M. Shanab</a></p>
+        </div>
+        <!-- Auth loading spinner (inside login screen) -->
+        <div id="auth-loading" class="auth-loading hidden">
+            <div class="spinner"></div>
+        </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" class="loading-overlay">
-        <div class="spinner"></div>
-        <p id="loading-title">Preparing&hellip;</p>
-        <div id="progress-bar-container" class="progress-bar-container hidden">
-            <div id="progress-bar-fill" class="progress-bar-fill"></div>
+    <!-- ============ Main App (hidden until login) ============ -->
+    <div id="main-content" class="hidden">
+        <div class="container">
+
+            <!-- Header -->
+            <header class="app-header">
+                <h1>Transfers Register</h1>
+                <div id="user-info" class="user-info">
+                    <span id="user-email" class="user-email"></span>
+                    <button id="logout-btn" class="btn btn-danger btn-sm">Logout</button>
+                </div>
+            </header>
+
+            <!-- Status message area -->
+            <div id="status-message" class="status-msg hidden"></div>
+
+            <!-- Scanner Section -->
+            <section class="scanner-section">
+                <!-- Camera view (hidden by default) -->
+                <div id="scanner-container" class="scanner-hidden">
+                    <div id="scanner-reader"></div>
+                </div>
+
+                <!-- Controls -->
+                <div class="scanner-controls">
+                    <button id="btn-scan" class="btn btn-primary">Scan</button>
+                </div>
+
+                <!-- Barcode input + Search -->
+                <div class="input-row">
+                    <input
+                        type="text"
+                        id="barcode-input"
+                        class="barcode-input"
+                        placeholder="Barcode / SKU"
+                        inputmode="numeric"
+                        autocomplete="off"
+                    />
+                    <button id="btn-search" class="btn btn-secondary">Search</button>
+                </div>
+            </section>
+
+            <!-- Scanned Item Result -->
+            <section id="item-result" class="item-result hidden">
+                <h3>Item Found</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Img</th>
+                            <th>SKU</th>
+                            <th>Item Name (EN)</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody id="item-result-body"></tbody>
+                </table>
+                <div class="to-store-row">
+                    <label for="to-store-input" class="to-store-label">To Store</label>
+                    <input
+                        type="text"
+                        id="to-store-input"
+                        class="to-store-input"
+                        placeholder="e.g. 1234"
+                        inputmode="numeric"
+                        maxlength="4"
+                        autocomplete="off"
+                    />
+                </div>
+                <button id="btn-add-transfer" class="btn btn-success">Add Transfer</button>
+            </section>
+
+            <!-- Month Navigation -->
+            <section id="month-nav-section" class="month-nav-section">
+                <div class="month-nav-header">
+                    <h2>Transfers</h2>
+                    <div class="year-navigation">
+                        <button class="year-nav-btn" id="prev-year-btn" title="Previous Year">&lt;</button>
+                        <div class="year-display">
+                            <span class="year-label">Year</span>
+                            <span class="year-value" id="current-year"></span>
+                        </div>
+                        <button class="year-nav-btn" id="next-year-btn" title="Next Year">&gt;</button>
+                    </div>
+                </div>
+                <div class="months-tab" id="months-tab">
+                    <!-- Month buttons generated dynamically -->
+                </div>
+            </section>
+
+            <!-- Transfers List -->
+            <section id="transfers-section" class="transfers-section hidden">
+                <div class="transfers-header">
+                    <h2 id="transfers-month-title">Transfers</h2>
+                    <div class="transfers-header-actions">
+                        <button id="btn-export-excel" class="btn btn-action btn-sm" title="Export to Excel">Export Excel</button>
+                        <button id="btn-print" class="btn btn-action btn-sm" title="Print transfers table">Print</button>
+                        <span id="transfers-count" class="transfers-count">0</span>
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Img</th>
+                            <th>SKU</th>
+                            <th>Item Name</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>To Store</th>
+                            <th>Done</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="transfers-body"></tbody>
+                </table>
+            </section>
         </div>
-        <p id="loading-progress"></p>
+
+        <!-- Image Modal (full-size product image popup) -->
+        <div id="image-modal" class="image-modal hidden">
+            <div class="image-modal-overlay"></div>
+            <div class="image-modal-content">
+                <button class="image-modal-close">&times;</button>
+                <img id="image-modal-img" src="" alt="Product Image" />
+            </div>
+        </div>
+
+        <!-- Loading Overlay (DB download progress) -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="spinner"></div>
+            <p id="loading-title">Preparing&hellip;</p>
+            <div id="progress-bar-container" class="progress-bar-container hidden">
+                <div id="progress-bar-fill" class="progress-bar-fill"></div>
+            </div>
+            <p id="loading-progress"></p>
+        </div>
     </div>
 
     <!-- External Libraries (CDN) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
 
-    <!-- App Modules -->
+    <!-- App Modules (regular scripts – define globals) -->
     <script src="js/database.js"></script>
     <script src="js/scanner.js"></script>
+    <script src="js/nahdi-api.js"></script>
     <script src="js/transfers.js"></script>
     <script src="js/app.js"></script>
+
+    <!-- Firebase (ES modules – deferred, run after regular scripts) -->
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/auth.js"></script>
 </body>
 
 </html>
