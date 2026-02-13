@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Transfers Register</title>
+    <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <header class="app-header">
+            <h1>Transfers Register</h1>
+        </header>
+
+        <!-- Status message area -->
+        <div id="status-message" class="status-msg hidden"></div>
+
+        <!-- Scanner Section -->
+        <section class="scanner-section">
+            <!-- Camera view (hidden by default) -->
+            <div id="scanner-container" class="scanner-hidden">
+                <div id="scanner-reader"></div>
+            </div>
+
+            <!-- Controls -->
+            <div class="scanner-controls">
+                <button id="btn-scan" class="btn btn-primary">Scan</button>
+            </div>
+
+            <!-- Barcode input + Search -->
+            <div class="input-row">
+                <input
+                    type="text"
+                    id="barcode-input"
+                    class="barcode-input"
+                    placeholder="Barcode / SKU"
+                    inputmode="numeric"
+                    autocomplete="off"
+                />
+                <button id="btn-search" class="btn btn-secondary">Search</button>
+            </div>
+        </section>
+
+        <!-- Scanned Item Result -->
+        <section id="item-result" class="item-result hidden">
+            <h3>Item Found</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Item Name (EN)</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                    </tr>
+                </thead>
+                <tbody id="item-result-body"></tbody>
+            </table>
+            <button id="btn-add-transfer" class="btn btn-success">Add Transfer</button>
+        </section>
+
+        <!-- Transfers List -->
+        <section id="transfers-section" class="transfers-section hidden">
+            <div class="transfers-header">
+                <h2>Transfers</h2>
+                <span id="transfers-count" class="transfers-count">0</span>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Item Name</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="transfers-body"></tbody>
+            </table>
+        </section>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p id="loading-title">Preparing&hellip;</p>
+        <div id="progress-bar-container" class="progress-bar-container hidden">
+            <div id="progress-bar-fill" class="progress-bar-fill"></div>
+        </div>
+        <p id="loading-progress"></p>
+    </div>
+
+    <!-- External Libraries (CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <!-- App Modules -->
+    <script src="js/database.js"></script>
+    <script src="js/scanner.js"></script>
+    <script src="js/transfers.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
