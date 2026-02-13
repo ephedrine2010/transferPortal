@@ -213,7 +213,6 @@ const Database = (function () {
             barcode: '',
             gtin: '',
             name_en: row.name_en || '',
-            name_ar: row.name_ar || '',
             price: 0,
             vat: row.vat || 0
         };
