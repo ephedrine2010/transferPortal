@@ -360,6 +360,13 @@ body {
     background-color: #f8f9fa;
 }
 
+.created-at {
+    display: block;
+    font-size: 0.75em;
+    color: #888;
+    margin-top: 2px;
+}
+
 /* ===== Qty Input ===== */
 .qty-input {
     width: 60px;

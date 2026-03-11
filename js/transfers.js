@@ -285,11 +285,21 @@ var Transfers = (function () {
                     'src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" />';
             }
 
+            var createdAtHtml = '';
+            if (list[i].createdAt && list[i].createdAt.toDate) {
+                var d = list[i].createdAt.toDate();
+                var day = String(d.getDate()).padStart(2, '0');
+                var mon = String(d.getMonth() + 1).padStart(2, '0');
+                var hr  = String(d.getHours()).padStart(2, '0');
+                var min = String(d.getMinutes()).padStart(2, '0');
+                createdAtHtml = '<span class="created-at">' + day + '/' + mon + ' ' + hr + ':' + min + '</span>';
+            }
+
             rows +=
                 '<tr' + (list[i].transferDone ? ' class="transfer-done"' : '') + '>' +
                 '<td class="td-img">' + imgHtml + '</td>' +
                 '<td>' + list[i].sku + '</td>' +
-                '<td>' + list[i].name_en + '</td>' +
+                '<td>' + list[i].name_en + createdAtHtml + '</td>' +
                 '<td>' + list[i].price.toFixed(2) + '</td>' +
                 '<td>' + list[i].qty + '</td>' +
                 '<td>' + list[i].toStore + '</td>' +
