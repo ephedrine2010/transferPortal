@@ -271,6 +271,12 @@ var Transfers = (function () {
         section.classList.remove('hidden');
         if (countBadge) countBadge.textContent = list.length;
 
+        list.sort(function (a, b) {
+            var tA = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
+            var tB = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
+            return tB - tA;
+        });
+
         var rows = '';
         for (var i = 0; i < list.length; i++) {
             var hasImg = !!list[i].imageUrl;
