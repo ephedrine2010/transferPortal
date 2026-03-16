@@ -11,8 +11,10 @@ var NahdiApi = (function () {
     var pendingRequests = {};
 
     var API_BASE = 'https://www.nahdionline.com/api/analytics/product';
-    // CORS proxy fallback (used when direct fetch is blocked by browser CORS policy)
-    var CORS_PROXY = 'https://corsproxy.io/?';
+    var CORS_PROXIES = [
+        function (url) { return 'https://corsproxy.io/?' + encodeURIComponent(url); },
+        function (url) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url); }
+    ];
 
     // ─── Image Fetching ─────────────────────────────────────────────────
 
@@ -49,30 +51,23 @@ var NahdiApi = (function () {
         try {
             var data = null;
 
-            // Attempt 1: Direct fetch
-            try {
-                var resp = await fetch(apiUrl);
-                if (resp.ok) data = await resp.json();
-            } catch (_directErr) {
-                // Likely a CORS error – fall through to proxy
-            }
-
-            // Attempt 2: CORS proxy
-            if (!data) {
+            for (var i = 0; i < CORS_PROXIES.length; i++) {
                 try {
-                    var proxyResp = await fetch(CORS_PROXY + encodeURIComponent(apiUrl));
-                    if (proxyResp.ok) data = await proxyResp.json();
-                } catch (_proxyErr) {
-                    console.warn('NahdiApi: Both direct and proxy fetch failed for SKU ' + sku);
-                }
+                    var proxyUrl = CORS_PROXIES[i](apiUrl);
+                    var resp = await fetch(proxyUrl);
+                    if (resp.ok) {
+                        data = await resp.json();
+                        break;
+                    }
+                } catch (_err) { /* try next proxy */ }
             }
 
             if (!data) {
+                console.warn('NahdiApi: All proxies failed for SKU ' + sku);
                 imageCache[sku] = null;
                 return null;
             }
 
-            // Log the first successful response so developers can inspect the shape
             if (Object.keys(imageCache).length === 0) {
                 console.log('NahdiApi: sample response for SKU ' + sku, data);
             }
