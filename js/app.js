@@ -28,6 +28,7 @@ var App = (function () {
             // Initialise month navigation, action buttons, and start listening
             Transfers.bindYearButtons();
             Transfers.bindActionButtons();
+            Transfers.initDetailModal();
             Transfers.generateMonthButtons();
             Transfers.startListening();
 

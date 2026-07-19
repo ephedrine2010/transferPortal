@@ -35,6 +35,19 @@ var Transfers = (function () {
     }
 
     /**
+     * Extract the user ID from the logged-in user's email.
+     * The local part of the email is {storeCode}{userId}; the first 4 chars are
+     * the store code, so the user ID is everything after them.
+     * e.g. '416611656@testtest.com' → '11656', '78243214@testtest.com' → '3214'.
+     */
+    function getUserId() {
+        var user = window.currentAppUser;
+        if (!user || !user.email) return null;
+        var localPart = user.email.split('@')[0];
+        return localPart.substring(4);
+    }
+
+    /**
      * Build the Firestore collection path for the current store + selected month.
      * Pattern: {storeCode}/transfers/{YYYYMM}
      */
@@ -153,6 +166,7 @@ var Transfers = (function () {
                 qty: item.qty || 1,
                 toStore: item.toStore || '',
                 imageUrl: item.imageUrl || '',
+                userId: getUserId() || '',
                 transferDone: false,
                 createdAt: fns.serverTimestamp()
             });
@@ -218,6 +232,7 @@ var Transfers = (function () {
                     qty: data.qty,
                     toStore: data.toStore || '',
                     imageUrl: data.imageUrl || '',
+                    userId: data.userId || '',
                     transferDone: data.transferDone || false,
                     createdAt: data.createdAt
                 });
@@ -291,21 +306,25 @@ var Transfers = (function () {
                     'src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" />';
             }
 
-            var createdAtHtml = '';
+            var createdAtInner = '';
             if (list[i].createdAt && list[i].createdAt.toDate) {
                 var d = list[i].createdAt.toDate();
                 var day = String(d.getDate()).padStart(2, '0');
                 var mon = String(d.getMonth() + 1).padStart(2, '0');
                 var hr  = String(d.getHours()).padStart(2, '0');
                 var min = String(d.getMinutes()).padStart(2, '0');
-                createdAtHtml = '<span class="created-at">' + day + '/' + mon + ' ' + hr + ':' + min + '</span>';
+                createdAtInner += '<span class="created-at">' + day + '/' + mon + ' ' + hr + ':' + min + '</span>';
             }
+            if (list[i].userId) {
+                createdAtInner += '<span class="created-by">Created by : ' + list[i].userId + '</span>';
+            }
+            var createdAtHtml = createdAtInner ? '<span class="created-meta">' + createdAtInner + '</span>' : '';
 
             rows +=
                 '<tr' + (list[i].transferDone ? ' class="transfer-done"' : '') + '>' +
                 '<td class="td-img">' + imgHtml + '</td>' +
                 '<td>' + list[i].sku + '</td>' +
-                '<td>' + list[i].name_en + createdAtHtml + '</td>' +
+                '<td><span class="item-name-link" data-detail-id="' + list[i].id + '">' + list[i].name_en + '</span>' + createdAtHtml + '</td>' +
                 '<td>' + list[i].price.toFixed(2) + '</td>' +
                 '<td>' + list[i].qty + '</td>' +
                 '<td>' + list[i].toStore + '</td>' +
@@ -338,6 +357,91 @@ var Transfers = (function () {
         for (var m = 0; m < imgEls.length; m++) {
             imgEls[m].addEventListener('click', handleImageClick);
         }
+
+        // Attach item-name click → open detail modal
+        var nameEls = tbody.querySelectorAll('.item-name-link');
+        for (var n = 0; n < nameEls.length; n++) {
+            nameEls[n].addEventListener('click', handleNameClick);
+        }
+    }
+
+    /**
+     * Handle click on an item name – opens the transfer detail modal.
+     */
+    function handleNameClick(e) {
+        var id = e.currentTarget.getAttribute('data-detail-id');
+        var item = null;
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].id === id) { item = list[i]; break; }
+        }
+        if (item) openDetailModal(item);
+    }
+
+    /**
+     * Populate and show the transfer detail modal for a given record.
+     */
+    function openDetailModal(item) {
+        var modal = document.getElementById('detail-modal');
+        if (!modal) return;
+
+        var imgEl = document.getElementById('detail-modal-img');
+        if (imgEl) {
+            if (item.imageUrl) {
+                imgEl.src = item.imageUrl;
+                imgEl.classList.remove('hidden');
+            } else {
+                imgEl.src = '';
+                imgEl.classList.add('hidden');
+            }
+        }
+
+        var dateStr = '';
+        if (item.createdAt && item.createdAt.toDate) {
+            var d = item.createdAt.toDate();
+            var day = String(d.getDate()).padStart(2, '0');
+            var mon = String(d.getMonth() + 1).padStart(2, '0');
+            var yr  = d.getFullYear();
+            var hr  = String(d.getHours()).padStart(2, '0');
+            var min = String(d.getMinutes()).padStart(2, '0');
+            dateStr = day + '/' + mon + '/' + yr + ' ' + hr + ':' + min;
+        }
+
+        setText('detail-modal-name', item.name_en);
+        setText('detail-modal-sku', item.sku);
+        setText('detail-modal-store', item.toStore || '—');
+        setText('detail-modal-date', dateStr || '—');
+
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function setText(id, value) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = value;
+    }
+
+    /**
+     * Hide the transfer detail modal.
+     */
+    function closeDetailModal() {
+        var modal = document.getElementById('detail-modal');
+        if (modal) modal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    /**
+     * Bind detail-modal close listeners (call once at init).
+     */
+    function initDetailModal() {
+        var modal = document.getElementById('detail-modal');
+        if (!modal) return;
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal || e.target.classList.contains('detail-modal-overlay')) {
+                closeDetailModal();
+            }
+        });
+        var closeBtn = modal.querySelector('.detail-modal-close');
+        if (closeBtn) closeBtn.addEventListener('click', closeDetailModal);
     }
 
     /**
@@ -408,6 +512,7 @@ var Transfers = (function () {
                 'Price': list[i].price.toFixed(2),
                 'Qty': list[i].qty,
                 'To Store': list[i].toStore,
+                'User ID': list[i].userId || '',
                 'Done': list[i].transferDone ? 'Yes' : 'No'
             });
         }
@@ -495,6 +600,7 @@ var Transfers = (function () {
         stopListening: stopListening,
         generateMonthButtons: generateMonthButtons,
         bindYearButtons: bindYearButtons,
-        bindActionButtons: bindActionButtons
+        bindActionButtons: bindActionButtons,
+        initDetailModal: initDetailModal
     };
 })();

@@ -360,11 +360,20 @@ body {
     background-color: #f8f9fa;
 }
 
-.created-at {
+.created-meta {
     display: block;
+    margin-top: 2px;
+}
+
+.created-at {
     font-size: 0.75em;
     color: #888;
-    margin-top: 2px;
+}
+
+.created-by {
+    font-size: 0.75em;
+    color: #888;
+    margin-left: 8px;
 }
 
 /* ===== Qty Input ===== */
@@ -698,6 +707,99 @@ body {
     transform: scale(1.1);
 }
 
+/* ===== Clickable item name ===== */
+.item-name-link {
+    cursor: pointer;
+}
+
+/* ===== Detail Modal ===== */
+.detail-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.detail-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.detail-modal-content {
+    position: relative;
+    z-index: 1;
+    width: 90vw;
+    max-width: 400px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.detail-modal-img {
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+    object-fit: contain;
+    display: block;
+}
+
+.detail-modal-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.detail-modal-name {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #16213e;
+}
+
+.detail-modal-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.4rem 0;
+    font-size: 0.85rem;
+    text-align: left;
+}
+
+.detail-modal-label {
+    color: #999;
+}
+
+.detail-modal-close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    border: none;
+    background: none;
+    color: #999;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+}
+
+.detail-modal-close:hover {
+    color: #333;
+}
+
 /* ===== Utility ===== */
 .hidden {
     display: none !important;
@@ -952,7 +1054,8 @@ body {
     .login-screen,
     #btn-scan,
     .transfers-header-actions,
-    .image-modal {
+    .image-modal,
+    .detail-modal {
         display: none !important;
     }
 

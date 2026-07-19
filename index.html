@@ -160,6 +160,21 @@
             </div>
         </div>
 
+        <!-- Transfer Detail Modal -->
+        <div id="detail-modal" class="detail-modal hidden">
+            <div class="detail-modal-overlay"></div>
+            <div class="detail-modal-content">
+                <button class="detail-modal-close">&times;</button>
+                <img id="detail-modal-img" class="detail-modal-img" src="" alt="Product Image" />
+                <div class="detail-modal-body">
+                    <h3 id="detail-modal-name" class="detail-modal-name"></h3>
+                    <div class="detail-modal-row"><span class="detail-modal-label">SKU</span><span id="detail-modal-sku"></span></div>
+                    <div class="detail-modal-row"><span class="detail-modal-label">Store</span><span id="detail-modal-store"></span></div>
+                    <div class="detail-modal-row"><span class="detail-modal-label">Date</span><span id="detail-modal-date"></span></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Loading Overlay (DB download progress) -->
         <div id="loading-overlay" class="loading-overlay hidden">
             <div class="spinner"></div>
